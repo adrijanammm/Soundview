@@ -50,3 +50,8 @@ borough_mmbtu_sum.plot.pie(autopct='%1.1f%%', startangle=90)
 plt.title('Total MMBTU (High) Contribution by Borough')
 plt.ylabel('')
 plt.show()
+
+
+zipcode_group.get_group(10472).plot.scatter(x="Boiler Capacity (Gross  BTU)", y="Total Gallons (High)")
+
+zipcode_group.get_group(10472)["Total MMBTU (High)"].plot.hist()
