@@ -23,3 +23,61 @@
         <img src="fuel bar" alt="laptop image">
     </div>
 </body>
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import gdown
+
+# download the file from our drive
+!wget https://huntercsci127.github.io/files/clean_heat_dataset.csv
+#list the files in the current directory to confirm the file is there
+!ls
+
+clean_heat = pd.read_csv("clean_heat_dataset.csv")
+
+columns= ['Borough, Block, Lot #', 'Street Address', 'Postcode', 'Borough', 'Utility', 'Building Manager', 'Owner', 'Owner Address', 'Owner Telephone', 'DEP Boiler Application #', '#6 Deadline', 'Boiler Model', '# of Identical Boilers', 'Boiler Capacity (Gross  BTU)', 'Boiler Installation Date', 'Boiler Age Range', 'Est. Retirement Year', 'Burner Model', 'Primary Fuel', 'Total Gallons (High)', 'Total Gallons (Low)', 'Total MMBTU (High)', 'Total MMBTU (low)', 'Greener Greater Buildings', 'GGB Deadline', 'Building Type', 'Council District', 'Community Board', 'Bldg Sqft', '# of Bldgs', '# of Floors', '# of Res. Units', 'Total Units', 'Year Built', 'Condo?', 'Coop?', 'Latitude', 'Longitude', 'Census Tract', 'BIN', 'BBL', 'NTA']
+cat_columns= ['Street Address', 'Borough', 'Utility', 'Building Manager', 'Owner','Owner Address','Owner Telephone', 'DEP Boiler Application #','Boiler Model','Boiler Age Range', 'Burner Model', 'Primary Fuel', 'Building Type', 'Community Board', 'Bldg Sqft', 'Condo?', 'Coop?', 'NTA']
+num_columns=['Borough, Block, Lot #','Postcode','#6 Deadline','# of Identical Boilers','Boiler Capacity (Gross  BTU)', 'Boiler Installation Date',  'Est. Retirement Year', 'Total Gallons (Low)', 'Total MMBTU (High)', 'Total MMBTU (low)', 'Greener Greater Buildings', 'GGB Deadline', 'Council District', '# of Bldgs', '# of Floors', '# of Res. Units', 'Total Units', 'Year Built','Latitude', 'Longitude', 'Census Tract', 'BIN', 'BBL']
+clean_heat[num_columns]=clean_heat[num_columns].fillna(value=0)
+clean_heat[cat_columns]=clean_heat[cat_columns].fillna(value="")
+
+fuel_data = {
+    "Borough": ["Manhattan", "Bronx", "Queens", "Brooklyn", "Staten Island", "Total"],
+    "Fuel #4": fuel_fours,
+    "Fuel #6": fuel_sixes
+}
+
+fuels_df = pd.DataFrame(fuel_data)
+fuels_df.set_index('Borough', inplace=True)
+
+fuels_df.plot.bar()
+plt.xlabel("Borough")
+plt.ylabel("Fraction")
+plt.title("Frequency of Fuels by Borough")
+plt.legend(title="Fuel Type")
+plt.show()
+
+mt_ggb_fraction = boroughs.get_group("Manhattan")["Greener Greater Buildings"].mean()
+bx_ggb_fraction = boroughs.get_group("Bronx")["Greener Greater Buildings"].mean()
+qu_ggb_fraction = boroughs.get_group("Queens")["Greener Greater Buildings"].mean()
+bk_ggb_fraction = boroughs.get_group("Brooklyn")["Greener Greater Buildings"].mean()
+si_ggb_fraction = boroughs.get_group("Staten Island")["Greener Greater Buildings"].mean()
+total_ggb_fraction = clean_heat["Greener Greater Buildings"].mean()
+print("Fraction of Greener Greater Buildings in Manhattan:", mt_ggb_fraction)
+print("Fraction of Greener Greater Buildings in Bronx:", bx_ggb_fraction)
+print("Fraction of Greener Greater Buildings in Queens:", qu_ggb_fraction)
+print("Fraction of Greener Greater Buildings in Brooklyn:", bk_ggb_fraction)
+print("Fraction of Greener Greater Buildings in Staten Island:", si_ggb_fraction)
+print("Fraction of Greener Greater Buildings in the City:", total_ggb_fraction)
+
+
+borough_mmbtu_sum = clean_heat.groupby('Borough')['Total MMBTU (High)'].sum()
+borough_mmbtu_sum.plot.pie(autopct='%1.1f%%', startangle=90)
+plt.title('Total MMBTU (High) Contribution by Borough')
+plt.ylabel('')
+plt.show()
+
+
+zipcode_group.get_group(10472).plot.scatter(x="Boiler Capacity (Gross  BTU)", y="Total Gallons (High)")
+
+zipcode_group.get_group(10472)["Total MMBTU (High)"].plot.hist()
